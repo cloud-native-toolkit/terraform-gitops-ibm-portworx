@@ -79,3 +79,19 @@ variable "server_name" {
   description = "The name of the server"
   default     = "default"
 }
+
+variable "resource_group_id" {
+  type        = string
+  description = "The id of the resource group where the portworx instance will be provisioned"
+}
+
+variable "ibmcloud_api_key" {
+  type        = string
+  description = "The api key for the IBM Cloud account"
+  sensitive = true
+}
+
+variable "region" {
+  type        = string
+  description = "The region where the resource should be deployed"
+}

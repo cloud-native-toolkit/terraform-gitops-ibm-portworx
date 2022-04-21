@@ -75,3 +75,12 @@ variable "kubeseal_namespace" {
 
 variable "cp_entitlement_key" {
 }
+
+variable "ibmcloud_api_key" {
+}
+
+variable "region" {
+}
+
+variable "resource_group_name" {
+}

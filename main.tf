@@ -1,19 +1,28 @@
 locals {
-  name          = "my-module"
+  name          = "portworx"
   bin_dir       = module.setup_clis.bin_dir
   yaml_dir      = "${path.cwd}/.tmp/${local.name}/chart/${local.name}"
-  service_url   = "http://${local.name}.${var.namespace}"
+  template_dir  = "${local.yaml_dir}/templates"
+  secret_dir    = "${path.cwd}/.tmp/${local.name}/secrets"
+  apikey_secret_name = "ibmcloud-operator-secret"
   values_content = {
+    ibm-portworx = {
+      region = var.region
+      resourceGroupId = var.resource_group_id
+    }
   }
-  layer = "services"
-  type  = "base"
+  layer = "infrastructure"
+  type  = "instances"
   application_branch = "main"
   namespace = var.namespace
   layer_config = var.gitops_config[local.layer]
 }
 
 module setup_clis {
-  source = "github.com/cloud-native-toolkit/terraform-util-clis.git"
+  source = "cloud-native-toolkit/clis/util"
+  version = "1.9.5"
+
+  clis = ["igc", "jq", "kubectl"]
 }
 
 resource null_resource create_yaml {
@@ -26,8 +35,33 @@ resource null_resource create_yaml {
   }
 }
 
-resource null_resource setup_gitops {
+resource null_resource create_secrets {
   depends_on = [null_resource.create_yaml]
+
+  provisioner "local-exec" {
+    command = "${path.module}/scripts/create-secret.sh '${var.namespace}' '${local.apikey_secret_name}' '${local.secret_dir}'"
+
+    environment = {
+      IBMCLOUD_API_KEY = nonsensitive(var.ibmcloud_api_key)
+      BIN_DIR = module.setup_clis.bin_dir
+    }
+  }
+}
+
+module seal_secrets {
+  depends_on = [null_resource.create_secrets]
+
+  source = "github.com/cloud-native-toolkit/terraform-util-seal-secrets.git?ref=v1.1.0"
+
+  source_dir    = local.secret_dir
+  dest_dir      = local.template_dir
+  kubeseal_cert = var.kubeseal_cert
+  label         = "ibmcloud-operator-secret"
+  annotations   = ["argocd.argoproj.io/sync-wave=-5"]
+}
+
+resource null_resource setup_gitops {
+  depends_on = [null_resource.create_yaml, module.seal_secrets]
 
   triggers = {
     name = local.name
@@ -42,7 +76,7 @@ resource null_resource setup_gitops {
   }
 
   provisioner "local-exec" {
-    command = "${self.triggers.bin_dir}/igc gitops-module '${self.triggers.name}' -n '${self.triggers.namespace}' --contentDir '${self.triggers.yaml_dir}' --serverName '${self.triggers.server_name}' -l '${self.triggers.layer}' --type '${self.triggers.type}'"
+    command = "${self.triggers.bin_dir}/igc gitops-module '${self.triggers.name}' -n '${self.triggers.namespace}' --contentDir '${self.triggers.yaml_dir}' --serverName '${self.triggers.server_name}' -l '${self.triggers.layer}' --type '${self.triggers.type}' --cascadingDelete=true"
 
     environment = {
       GIT_CREDENTIALS = nonsensitive(self.triggers.git_credentials)

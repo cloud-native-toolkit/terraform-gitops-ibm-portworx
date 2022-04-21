@@ -34,3 +34,15 @@ output "type" {
   value       = local.type
   depends_on  = [null_resource.setup_gitops]
 }
+
+output "region" {
+  description = "The region where the portworx resource has been delivered"
+  value       = var.region
+  depends_on  = [null_resource.setup_gitops]
+}
+
+output "resource_group_id" {
+  description = "The id of the resource group where the portworx resource has been delivered"
+  value       = var.resource_group_id
+  depends_on  = [null_resource.setup_gitops]
+}

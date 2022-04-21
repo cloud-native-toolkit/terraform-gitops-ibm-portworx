@@ -1,9 +1,10 @@
-name: ""
+name: gitops-ibm-portworx
 type: gitops
-description: ""
+description: Module to populate a gitops repository with the resources required to provision Portworx in an OpenShift cluster
 tags:
-  - tools
   - gitops
+  - portworx
+  - ibmcloud
 versions:
   - platforms:
       - kubernetes
@@ -18,6 +19,14 @@ versions:
         refs:
           - source: github.com/cloud-native-toolkit/terraform-gitops-namespace.git
             version: ">= 1.0.0"
+      - id: ibmcloud-operator
+        refs:
+          - source: github.com/cloud-native-toolkit/terraform-gitops-ibmcloud-operator.git
+            version: ">= 0.1.0"
+      - id: resource-group
+        refs:
+          - source: github.com/cloud-native-toolkit/terraform-ibm-resource-group.git
+            version: ">= 0.1.0"
     variables:
       - name: gitops_config
         moduleRef:
@@ -39,3 +48,11 @@ versions:
         moduleRef:
           id: gitops
           output: sealed_secrets_cert
+      - name: resource_group_id
+        moduleRef:
+          id: resource-group
+          output: id
+      - name: ibmcloud_api_key
+        scope: global
+      - name: region
+        scope: global

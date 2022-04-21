@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
+SCRIPT_DIR=$(cd $(dirname "$0"); pwd -P)
+
 GIT_REPO=$(cat git_repo)
 GIT_TOKEN=$(cat git_token)
 
 BIN_DIR=$(cat .bin_dir)
 
 export PATH="${BIN_DIR}:${PATH}"
+
+source "${SCRIPT_DIR}/validation-functions.sh"
 
 if ! command -v oc 1> /dev/null 2> /dev/null; then
   echo "oc cli not found" >&2
@@ -33,52 +37,18 @@ cd .testrepo || exit 1
 
 find . -name "*"
 
-if [[ ! -f "argocd/${LAYER}/cluster/${SERVER_NAME}/${TYPE}/${NAMESPACE}-${COMPONENT_NAME}.yaml" ]]; then
-  echo "ArgoCD config missing - argocd/${LAYER}/cluster/${SERVER_NAME}/${TYPE}/${NAMESPACE}-${COMPONENT_NAME}.yaml"
-  exit 1
-fi
+set -e
 
-echo "Printing argocd/${LAYER}/cluster/${SERVER_NAME}/${TYPE}/${NAMESPACE}-${COMPONENT_NAME}.yaml"
-cat "argocd/${LAYER}/cluster/${SERVER_NAME}/${TYPE}/${NAMESPACE}-${COMPONENT_NAME}.yaml"
+validate_gitops_content "${NAMESPACE}" "${LAYER}" "${SERVER_NAME}" "${TYPE}" "${COMPONENT_NAME}" "values.yaml"
+validate_gitops_content "${NAMESPACE}" "${LAYER}" "${SERVER_NAME}" "${TYPE}" "${COMPONENT_NAME}" "templates/operator-secret.yaml"
 
-if [[ ! -f "payload/${LAYER}/namespace/${NAMESPACE}/${COMPONENT_NAME}/values.yaml" ]]; then
-  echo "Application values not found - payload/${LAYER}/namespace/${NAMESPACE}/${COMPONENT_NAME}/values.yaml"
-  exit 1
-fi
+check_k8s_namespace "${NAMESPACE}"
 
-echo "Printing payload/${LAYER}/namespace/${NAMESPACE}/${COMPONENT_NAME}/values.yaml"
-cat "payload/${LAYER}/namespace/${NAMESPACE}/${COMPONENT_NAME}/values.yaml"
-
-count=0
-until kubectl get namespace "${NAMESPACE}" 1> /dev/null 2> /dev/null || [[ $count -eq 20 ]]; do
-  echo "Waiting for namespace: ${NAMESPACE}"
-  count=$((count + 1))
-  sleep 15
-done
-
-if [[ $count -eq 20 ]]; then
-  echo "Timed out waiting for namespace: ${NAMESPACE}"
-  exit 1
-else
-  echo "Found namespace: ${NAMESPACE}. Sleeping for 30 seconds to wait for everything to settle down"
-  sleep 30
-fi
-
-DEPLOYMENT="${COMPONENT_NAME}-${BRANCH}"
-count=0
-until kubectl get deployment "${DEPLOYMENT}" -n "${NAMESPACE}" || [[ $count -eq 20 ]]; do
-  echo "Waiting for deployment/${DEPLOYMENT} in ${NAMESPACE}"
-  count=$((count + 1))
-  sleep 15
-done
-
-if [[ $count -eq 20 ]]; then
-  echo "Timed out waiting for deployment/${DEPLOYMENT} in ${NAMESPACE}"
-  kubectl get all -n "${NAMESPACE}"
-  exit 1
-fi
-
-kubectl rollout status "deployment/${DEPLOYMENT}" -n "${NAMESPACE}" || exit 1
+check_k8s_resource "${NAMESPACE}" "sealedsecret" "ibmcloud-operator-secret"
+check_k8s_resource "${NAMESPACE}" "secret" "ibmcloud-operator-secret"
+check_k8s_resource "${NAMESPACE}" "job" "portworx-ibm-portworx-job"
+check_k8s_resource "${NAMESPACE}" "daemonset" "ibm-portworx"
+check_k8s_resource "${NAMESPACE}" "services.ibmcloud" "portworx"
 
 cd ..
 rm -rf .testrepo
