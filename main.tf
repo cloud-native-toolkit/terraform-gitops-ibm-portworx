@@ -14,7 +14,7 @@ locals {
   layer = "infrastructure"
   type  = "instances"
   application_branch = "main"
-  namespace = var.namespace
+  namespace = "kube-system"
   layer_config = var.gitops_config[local.layer]
 }
 
@@ -39,7 +39,7 @@ resource null_resource create_secrets {
   depends_on = [null_resource.create_yaml]
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/create-secret.sh '${var.namespace}' '${local.apikey_secret_name}' '${local.secret_dir}'"
+    command = "${path.module}/scripts/create-secret.sh '${local.namespace}' '${local.apikey_secret_name}' '${local.secret_dir}'"
 
     environment = {
       IBMCLOUD_API_KEY = nonsensitive(var.ibmcloud_api_key)
@@ -65,7 +65,7 @@ resource null_resource setup_gitops {
 
   triggers = {
     name = local.name
-    namespace = var.namespace
+    namespace = local.namespace
     yaml_dir = local.yaml_dir
     server_name = var.server_name
     layer = local.layer
