@@ -47,8 +47,9 @@ check_k8s_namespace "${NAMESPACE}"
 check_k8s_resource "${NAMESPACE}" "sealedsecret" "ibmcloud-operator-secret"
 check_k8s_resource "${NAMESPACE}" "secret" "ibmcloud-operator-secret"
 check_k8s_resource "${NAMESPACE}" "job" "portworx-ibm-portworx-job"
-check_k8s_resource "${NAMESPACE}" "daemonset" "ibm-portworx"
-check_k8s_resource "${NAMESPACE}" "services.ibmcloud" "portworx"
+check_k8s_resource "${NAMESPACE}" "daemonset" "portworx-ibm-portworx"
+check_k8s_resource "${NAMESPACE}" "services.ibmcloud" "portworx-ibm-portworx"
+check_k8s_resource "${NAMESPACE}" "storageclass" "portworx-couchdb-sc"
 
 cd ..
 rm -rf .testrepo
