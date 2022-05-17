@@ -4,6 +4,10 @@ NAMESPACE="$1"
 NAME="$2"
 OUTPUT_DIR="$3"
 
+if [[ -n "${BIN_DIR}" ]]; then
+  export PATH="${BIN_DIR}:${PATH}"
+fi
+
 mkdir -p "${OUTPUT_DIR}"
 
 kubectl create secret generic "${NAME}" \
