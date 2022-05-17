@@ -21,6 +21,11 @@ if ! command -v kubectl 1> /dev/null 2> /dev/null; then
   exit 1
 fi
 
+if ! command -v ibmcloud 1> /dev/null 2> /dev/null; then
+  echo "ibmcloud cli not found" >&2
+  exit 1
+fi
+
 export KUBECONFIG=$(cat .kubeconfig)
 NAMESPACE=$(cat .namespace)
 COMPONENT_NAME=$(jq -r '.name // "my-module"' gitops-output.json)
@@ -50,6 +55,14 @@ check_k8s_resource "${NAMESPACE}" "job" "portworx-ibm-portworx-job"
 check_k8s_resource "${NAMESPACE}" "daemonset" "portworx-ibm-portworx"
 check_k8s_resource "${NAMESPACE}" "services.ibmcloud" "portworx-ibm-portworx"
 check_k8s_resource "${NAMESPACE}" "storageclass" "portworx-couchdb-sc"
+
+echo "Listing volumes"
+if [[ $(ibmcloud is volumes --output JSON | jq -r '.[] | select(.name | test("^pwx-")) | .name' | wc -l) -eq 0 ]]; then
+  echo "No volumes found" >&2
+  exit 1
+else
+  ibmcloud is volumes --output JSON | jq -r '.[] | .name'
+fi
 
 cd ..
 rm -rf .testrepo
