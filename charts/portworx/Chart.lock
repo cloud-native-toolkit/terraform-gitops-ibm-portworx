@@ -1,6 +1,6 @@
 dependencies:
 - name: ibm-portworx
   repository: https://charts.cloudnativetoolkit.dev
-  version: 0.4.3
-digest: sha256:8cfb3c5b60cc59f3dd5b2405e9c02307deffef4498a330f8bc663e2ff61f3c91
-generated: "2022-05-17T13:00:49.023229-05:00"
+  version: 0.6.4
+digest: sha256:279643bc3d48fc1e7b839a2cf4ab87246127dceb84d8ceb08235dc93be1b18b5
+generated: "2022-05-18T11:27:08.313483-05:00"

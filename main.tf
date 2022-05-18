@@ -9,6 +9,12 @@ locals {
     ibm-portworx = {
       region = var.region
       resourceGroupId = var.resource_group_id
+
+      volume = {
+        capacity = var.capacity
+        profile = var.profile
+        encryption_key = var.encryption_key
+      }
     }
   }
   layer = "infrastructure"

@@ -51,6 +51,8 @@ check_k8s_resource () {
   local GITOPS_TYPE="$2"
   local NAME="$3"
 
+  echo "Checking for resource: ${NS}/${GITOPS_TYPE}/${NAME}"
+
   count=0
   until kubectl get "${GITOPS_TYPE}" "${NAME}" -n "${NS}" 1> /dev/null 2> /dev/null || [[ $count -gt 20 ]]; do
     echo "Waiting for ${GITOPS_TYPE}/${NAME} in ${NS}"
@@ -67,8 +69,10 @@ check_k8s_resource () {
   kubectl get "${GITOPS_TYPE}" "${NAME}" -n "${NS}" -o yaml
 
   if [[ "${GITOPS_TYPE}" =~ deployment|statefulset|daemonset ]]; then
-    kubectl rollout status "${GITOPS_TYPE}" "${NAME}" -n "${NS}"
+    kubectl rollout status "${GITOPS_TYPE}" "${NAME}" -n "${NS}" || exit 1
   elif [[ "${GITOPS_TYPE}" == "job" ]]; then
-    kubectl wait --for=condition=complete "job/${NAME}" -n "${NS}"
+    kubectl wait --for=condition=complete "job/${NAME}" -n "${NS}" || exit 1
   fi
+
+  echo "Done checking for resource: ${NS}/${GITOPS_TYPE}/${NAME}"
 }

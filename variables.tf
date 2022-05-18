@@ -90,3 +90,27 @@ variable "region" {
   type        = string
   description = "The region where the resource should be deployed"
 }
+
+variable "encryption_key" {
+  type        = string
+  description = "The crn for the encryption key that should be used to encrypt the volume. If not provided the volume will be encrypted with an IBM-managed key"
+  default     = ""
+}
+
+variable "capacity" {
+  type        = string
+  description = "The capacity of the portworx volume"
+  default     = "200"
+}
+
+variable "iops" {
+  type        = string
+  description = "The transfer speed of the portworx volume. This value is only used if the profile is set to 'custom'"
+  default     = ""
+}
+
+variable "profile" {
+  type        = string
+  description = "The profile of the portworx volumes"
+  default     = "10iops-tier"
+}
