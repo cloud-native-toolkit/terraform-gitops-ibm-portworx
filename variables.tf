@@ -88,7 +88,8 @@ variable "ibmcloud_api_key" {
 
 variable "region" {
   type        = string
-  description = "The region where the resource should be deployed"
+  description = "The region where the Portworx service should be deployed. This region used doesn't really impact anything because the service runs in the cluster"
+  default     = "us-east"
 }
 
 variable "encryption_key" {
