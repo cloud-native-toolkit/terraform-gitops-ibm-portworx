@@ -72,6 +72,7 @@ variable "cp_entitlement_key" {
 }
 
 variable "ibmcloud_api_key" {
+  sensitive = true
 }
 
 variable "region" {

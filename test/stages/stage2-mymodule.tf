@@ -8,3 +8,9 @@ module "gitops_module" {
   resource_group_id = module.resource_group.id
   ibmcloud_api_key = var.ibmcloud_api_key
 }
+
+resource local_file api_key {
+  content = nonsensitive(var.ibmcloud_api_key)
+
+  filename = ".api_key"
+}
