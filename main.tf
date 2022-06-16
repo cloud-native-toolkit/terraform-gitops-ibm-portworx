@@ -15,6 +15,8 @@ locals {
         profile = var.profile
         encryption_key = var.encryption_key
       }
+
+      volumeSuffix = random_string.volume_suffix.result
     }
   }
   layer = "infrastructure"
@@ -22,6 +24,12 @@ locals {
   application_branch = "main"
   namespace = "kube-system"
   layer_config = var.gitops_config[local.layer]
+}
+
+resource random_string volume_suffix {
+  upper = false
+  special = false
+  length = 8
 }
 
 module setup_clis {
