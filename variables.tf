@@ -115,3 +115,27 @@ variable "profile" {
   description = "The profile of the portworx volumes"
   default     = "10iops-tier"
 }
+
+variable "etcd_username" {
+  type        = string
+  description = "The username for the external etcd database"
+  default     = ""
+}
+
+variable "etcd_password" {
+  type        = string
+  description = "The password for the external etcd database"
+  default     = ""
+}
+
+variable "etcd_connection_url" {
+  type        = string
+  description = "The connection url for the external etcd database"
+  default     = ""
+}
+
+variable "etcd_certificate_base64" {
+  type        = string
+  description = "The ca certificate for the external etcd database"
+  default     = ""
+}

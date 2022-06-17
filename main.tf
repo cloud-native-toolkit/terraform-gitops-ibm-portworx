@@ -5,6 +5,8 @@ locals {
   template_dir  = "${local.yaml_dir}/templates"
   secret_dir    = "${path.cwd}/.tmp/${local.name}/secrets"
   apikey_secret_name = "ibmcloud-operator-secret"
+  etcd_secret_name = "etcd_credentials"
+  etcd_external = var.etcd_connection_url != "" && var.etcd_username != "" && var.etcd_password != ""
   values_content = {
     ibm-portworx = {
       region = var.region
@@ -17,6 +19,8 @@ locals {
       }
 
       volumeSuffix = random_string.volume_suffix.result
+
+      etcdSecretName = local.etcd_external ? local.etcd_secret_name : ""
     }
   }
   layer = "infrastructure"
@@ -53,11 +57,15 @@ resource null_resource create_secrets {
   depends_on = [null_resource.create_yaml]
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/create-secret.sh '${local.namespace}' '${local.apikey_secret_name}' '${local.secret_dir}'"
+    command = "${path.module}/scripts/create-secret.sh '${local.namespace}' '${local.apikey_secret_name}' '${local.etcd_secret_name}' '${local.secret_dir}'"
 
     environment = {
       IBMCLOUD_API_KEY = nonsensitive(var.ibmcloud_api_key)
       BIN_DIR = module.setup_clis.bin_dir
+      ETCD_USERNAME = var.etcd_username
+      ETCD_PASSWORD = var.etcd_password
+      ETCD_CONNECTION_URL = var.etcd_connection_url
+      ETCD_CERTIFICATE_BASE64 = var.etcd_certificate_base64
     }
   }
 }
