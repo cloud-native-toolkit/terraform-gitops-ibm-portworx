@@ -44,5 +44,5 @@ if [[ -n "${ETCD_USERNAME}" ]] && [[ -n "${ETCD_PASSWORD}" ]] && [[ -n "${ETCD_C
     --local=true \
     --dry-run=client \
     --output=json \
-    > "${OUTPUT_DIR}/etcd-connection.yaml"
+    > "${OUTPUT_DIR}/${ETCD_SECRET}.yaml"
 fi

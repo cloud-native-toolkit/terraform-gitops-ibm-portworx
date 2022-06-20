@@ -5,7 +5,7 @@ locals {
   template_dir  = "${local.yaml_dir}/templates"
   secret_dir    = "${path.cwd}/.tmp/${local.name}/secrets"
   apikey_secret_name = "ibmcloud-operator-secret"
-  etcd_secret_name = "etcd_credentials"
+  etcd_secret_name = "etcd-credentials"
   etcd_external = var.etcd_connection_url != "" && var.etcd_username != "" && var.etcd_password != ""
   values_content = {
     ibm-portworx = {

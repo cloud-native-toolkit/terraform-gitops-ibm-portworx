@@ -54,13 +54,13 @@ set -e
 
 validate_gitops_content "${NAMESPACE}" "${LAYER}" "${SERVER_NAME}" "${TYPE}" "${COMPONENT_NAME}" "values.yaml"
 validate_gitops_content "${NAMESPACE}" "${LAYER}" "${SERVER_NAME}" "${TYPE}" "${COMPONENT_NAME}" "templates/operator-secret.yaml"
-validate_gitops_content "${NAMESPACE}" "${LAYER}" "${SERVER_NAME}" "${TYPE}" "${COMPONENT_NAME}" "templates/etcd-connection.yaml"
+validate_gitops_content "${NAMESPACE}" "${LAYER}" "${SERVER_NAME}" "${TYPE}" "${COMPONENT_NAME}" "templates/etcd-credentials.yaml"
 
 check_k8s_namespace "${NAMESPACE}"
 
 check_k8s_resource "${NAMESPACE}" "sealedsecret" "ibmcloud-operator-secret"
 check_k8s_resource "${NAMESPACE}" "secret" "ibmcloud-operator-secret"
-check_k8s_resource "${NAMESPACE}" "secret" "etcd_credentials"
+check_k8s_resource "${NAMESPACE}" "secret" "etcd-credentials"
 check_k8s_resource "${NAMESPACE}" "job" "portworx-ibm-portworx-job"
 check_k8s_resource "${NAMESPACE}" "daemonset" "portworx-ibm-portworx"
 check_k8s_resource "${NAMESPACE}" "services.ibmcloud" "portworx-ibm-portworx"
