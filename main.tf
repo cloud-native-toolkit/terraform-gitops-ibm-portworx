@@ -63,7 +63,7 @@ resource null_resource create_secrets {
       IBMCLOUD_API_KEY = nonsensitive(var.ibmcloud_api_key)
       BIN_DIR = module.setup_clis.bin_dir
       ETCD_USERNAME = var.etcd_username
-      ETCD_PASSWORD = var.etcd_password
+      ETCD_PASSWORD = nonsensitive(var.etcd_password)
       ETCD_CONNECTION_URL = var.etcd_connection_url
       ETCD_CERTIFICATE_BASE64 = var.etcd_certificate_base64
     }

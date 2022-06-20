@@ -126,6 +126,7 @@ variable "etcd_password" {
   type        = string
   description = "The password for the external etcd database"
   default     = ""
+  sensitive   = true
 }
 
 variable "etcd_connection_url" {
