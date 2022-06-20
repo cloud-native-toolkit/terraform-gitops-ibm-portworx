@@ -23,6 +23,11 @@ versions:
         refs:
           - source: github.com/cloud-native-toolkit/terraform-ibm-resource-group.git
             version: ">= 0.1.0"
+      - id: etcd
+        optional: true
+        refs:
+          - source: github.com/cloud-native-toolkit/terraform-ibm-etcd
+            version: ">= 0.1.0"
     variables:
       - name: gitops_config
         moduleRef:
@@ -48,3 +53,19 @@ versions:
         scope: global
       - name: region
         scope: global
+      - name: etcd_username
+        moduleRef:
+          id: etcd
+          output: username
+      - name: etcd_password
+        moduleRef:
+          id: etcd
+          output: password
+      - name: etcd_connection_url
+        moduleRef:
+          id: etcd
+          output: grpc_connection_url
+      - name: etcd_certificate_base64
+        moduleRef:
+          id: etcd
+          output: grpc_certificate_base64
