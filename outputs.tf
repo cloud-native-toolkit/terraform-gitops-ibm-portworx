@@ -46,3 +46,23 @@ output "resource_group_id" {
   value       = var.resource_group_id
   depends_on  = [gitops_module.module]
 }
+
+output "rwx_storage_class" {
+  value       = ""
+  depends_on  = [gitops_module.module]
+}
+
+output "rwo_storage_class" {
+  value = ""
+  depends_on  = [gitops_module.module]
+}
+
+output "file_storage_class" {
+  value       = ""
+  depends_on  = [gitops_module.module]
+}
+
+output "block_storage_class" {
+  value       = ""
+  depends_on  = [gitops_module.module]
+}

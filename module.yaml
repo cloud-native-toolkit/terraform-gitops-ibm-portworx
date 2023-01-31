@@ -1,4 +1,6 @@
 name: gitops-ibm-portworx
+interfaces:
+  - github.com/cloud-native-toolkit/automation-modules#cluster-storage
 type: gitops
 description: Module to populate a gitops repository with the resources required to provision Portworx in an OpenShift cluster
 tags:
