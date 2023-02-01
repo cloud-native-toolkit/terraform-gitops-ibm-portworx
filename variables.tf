@@ -115,3 +115,27 @@ variable "profile" {
   description = "The profile of the portworx volumes"
   default     = "10iops-tier"
 }
+
+variable "default_rwx_storage_class" {
+  type        = "string"
+  description = "The default storage class that should be used for RWX volumes"
+  default     = "portworx-rwx-gp3-sc"
+}
+
+variable "default_rwo_storage_class" {
+  type        = "string"
+  description = "The default storage class that should be used for RWO volumes"
+  default     = "portworx-gp3-sc"
+}
+
+variable "default_file_storage_class" {
+  type        = "string"
+  description = "The default storage class that should be used for file volumes"
+  default     = "portworx-gp3-sc"
+}
+
+variable "default_block_storage_class" {
+  type        = "string"
+  description = "The default storage class that should be used for block volumes"
+  default     = "ibmc-vpc-block-10iops-tier"
+}
