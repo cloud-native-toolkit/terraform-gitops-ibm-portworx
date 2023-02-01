@@ -53,7 +53,7 @@ output "rwx_storage_class" {
 }
 
 output "rwo_storage_class" {
-  value = ""
+  value = "ibmc-vpc-block-10iops-tier"
   depends_on  = [gitops_module.module]
 }
 
@@ -63,6 +63,6 @@ output "file_storage_class" {
 }
 
 output "block_storage_class" {
-  value       = ""
+  value       = "ibmc-vpc-block-10iops-tier"
   depends_on  = [gitops_module.module]
 }
