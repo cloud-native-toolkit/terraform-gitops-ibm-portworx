@@ -97,6 +97,9 @@ else
   ibmcloud is volumes --output JSON | jq -r '.[] | .name'
 fi
 
+echo "**** Storage classes: ****"
+oc get storageclass
+
 cat > ./pvc.yaml << EOM
 ---
 apiVersion: v1
